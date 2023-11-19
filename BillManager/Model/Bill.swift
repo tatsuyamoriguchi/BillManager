@@ -1,6 +1,7 @@
 // BillManager
 
 import Foundation
+import UserNotifications
 
 struct Bill: Codable {
     let id: UUID
@@ -9,6 +10,9 @@ struct Bill: Codable {
     var paidDate: Date?
     var payee: String?
     var remindDate: Date?
+    
+    // Because each bill can have its own reminder, you need to track which notifications have been created and to which bill they belong.
+    var notificationID: String?
     
     init(id: UUID = UUID()) {
         self.id = id
@@ -23,4 +27,7 @@ extension Bill: Hashable {
 //    func hash(into hasher: inout Hasher) {
 //        hasher.combine(id)
 //    }
+    
+    
+    
 }

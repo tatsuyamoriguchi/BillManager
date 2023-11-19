@@ -209,16 +209,34 @@ class BillDetailTableViewController: UITableViewController, UITextFieldDelegate 
         bill.paidDate = paidDate
         
         if remindSwitch.isOn {
-            bill.remindDate = remindDatePicker.date
+            bill.scheduleRemninder(on: remindDatePicker.date) { (updateBill) in
+                if updateBill.notificationID == nil {
+                    self.presentNeedAuthorizationAlert()
+                }
+                Database.shared.updateAndSave(updateBill)
+            }
         } else {
-            bill.remindDate = nil
+            bill.removeReminder()
+            Database.shared.updateAndSave(bill)
         }
         
-        Database.shared.updateAndSave(bill)
     }
     
     @objc func cancelButtonTapped() {
         dismiss(animated: true, completion: nil)
+    }
+    
+
+    func presentNeedAuthorizationAlert() {
+        
+        let title = "Authorizaion Needed"
+        let message = "Alarms don't work without notificaitons, and it looks like you haven't granted us permission to sen you those. Please go to the iOS Settings app and grant us notification permissions."
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+        
     }
 
 }
